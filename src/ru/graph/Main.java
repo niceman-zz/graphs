@@ -139,7 +139,15 @@ public class Main {
     }
 
     private void printGraph() {
-        System.out.println("Not implemented yet");
+        List<Vertex> vertices = GRAPH.getVertices();
+        System.out.println("Vertex\tLinked vertices");
+        for (Vertex vertex: vertices) {
+            System.out.print(vertex.getName() + "\t\t");
+            for (Edge edge: vertex.getEdges()) {
+                System.out.print(" " + edge.getOther(vertex));
+            }
+            System.out.println();
+        }
     }
 
     private void exit() {
