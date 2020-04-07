@@ -1,5 +1,7 @@
 package ru.graph;
 
+import java.util.Objects;
+
 public class Edge {
     final Vertex a;
     final Vertex b;
@@ -20,5 +22,19 @@ public class Edge {
             return a;
         }
         throw new IllegalArgumentException("This edge doesn't contain vertex: " + vertex);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Edge edge = (Edge) o;
+        return Objects.equals(a, edge.a) &&
+                Objects.equals(b, edge.b);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(a, b);
     }
 }
