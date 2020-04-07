@@ -3,8 +3,8 @@ package ru.graph;
 import java.util.*;
 
 public class Graph {
-    private List<Vertex> vertices = new ArrayList<>();
-    private List<Edge> edges = new ArrayList<>();
+    List<Vertex> vertices = new ArrayList<>();
+    List<Edge> edges = new ArrayList<>();
 
     public Vertex addVertex() {
         Vertex vertex = new Vertex();
@@ -13,11 +13,15 @@ public class Graph {
     }
 
     public Edge addEdge(Vertex a, Vertex b) {
-        Edge edge = new Edge(a, b);
+        Edge edge = createEdge(a, b);
         a.getEdges().add(edge);
         b.getEdges().add(edge);
         edges.add(edge);
         return edge;
+    }
+
+    Edge createEdge(Vertex a, Vertex b) {
+        return new Edge(a, b);
     }
 
     public List<Edge> getPath(Vertex start, Vertex finish) {
@@ -28,18 +32,25 @@ public class Graph {
         return path;
     }
 
-    private boolean traverse(Vertex current, Vertex finish, LinkedList<Edge> path, Map<Vertex, Boolean> passed) {
+    boolean traverse(Vertex current, Vertex finish, LinkedList<Edge> path, Map<Vertex, Boolean> passed) {
         if (passed.get(current)) {
             return false;
         }
         passed.put(current, true);
         for (Edge edge : current.getEdges()) {
-            path.add(edge);
-            if (edge.getOther(current) == finish || traverse(edge.getOther(current), finish, path, passed)) {
+            if (findFinish(edge, current, finish, path, passed)) {
                 return true;
             }
-            path.removeLast();
         }
+        return false;
+    }
+
+    boolean findFinish(Edge edge, Vertex current, Vertex finish, LinkedList<Edge> path, Map<Vertex, Boolean> passed) {
+        path.add(edge);
+        if (edge.getOther(current) == finish || traverse(edge.getOther(current), finish, path, passed)) {
+            return true;
+        }
+        path.removeLast();
         return false;
     }
 
