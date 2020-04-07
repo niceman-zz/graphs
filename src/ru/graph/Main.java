@@ -165,18 +165,7 @@ public class Main {
     }
 
     private void printGraph() {
-        boolean directed = graph instanceof DirectedGraph;
-        List<Vertex> vertices = graph.getVertices();
-        System.out.println("Vertex\tLinked vertices");
-        for (Vertex vertex: vertices) {
-            System.out.print(vertex.getName() + "\t\t");
-            for (Edge edge: vertex.getEdges()) {
-                if (!directed || ((DirectedEdge) edge).getStart() == vertex) {
-                    System.out.print(" " + edge.getOther(vertex));
-                }
-            }
-            System.out.println();
-        }
+        graph.printGraph();
     }
 
     private void exit() {

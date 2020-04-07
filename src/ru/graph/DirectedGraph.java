@@ -21,4 +21,11 @@ public class DirectedGraph extends Graph {
         }
         return false;
     }
+
+    @Override
+    void printNextVertex(Edge edge, Vertex currentVertex) {
+        if (((DirectedEdge) edge).getStart() == currentVertex) {
+            System.out.print(" " + edge.getOther(currentVertex));
+        }
+    }
 }

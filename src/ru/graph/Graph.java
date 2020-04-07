@@ -57,4 +57,19 @@ public class Graph {
     public List<Vertex> getVertices() {
         return vertices;
     }
+
+    public void printGraph() {
+        System.out.println("Vertex\tLinked vertices");
+        for (Vertex vertex: vertices) {
+            System.out.print(vertex.getName() + "\t\t");
+            for (Edge edge: vertex.getEdges()) {
+                printNextVertex(edge, vertex);
+            }
+            System.out.println();
+        }
+    }
+
+    void printNextVertex(Edge edge, Vertex currentVertex) {
+        System.out.print(" " + edge.getOther(currentVertex));
+    }
 }
