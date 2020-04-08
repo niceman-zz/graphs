@@ -3,15 +3,16 @@ package ru.graph;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class DirectedGraph extends Graph {
+public class DirectedGraph<E> extends Graph<E> {
     @Override
-    DirectedEdge createEdge(Vertex start, Vertex end) {
-        return new DirectedEdge(start, end);
+    DirectedEdge<E> createEdge(Vertex<E> start, Vertex<E> end) {
+        return new DirectedEdge<>(start, end);
     }
 
     @Override
-    boolean findFinish(Edge edge, Vertex current, Vertex finish, LinkedList<Edge> path, Map<Vertex, Boolean> passed) {
-        DirectedEdge directedEdge = (DirectedEdge) edge;
+    boolean findFinish(Edge<E> edge, Vertex<E> current, Vertex<E> finish, LinkedList<Edge<E>> path,
+                       Map<Vertex<E>, Boolean> passed) {
+        DirectedEdge<E> directedEdge = (DirectedEdge<E>) edge;
         if (directedEdge.getStart() == current) {
             path.add(edge);
             if (edge.getOther(current) == finish || traverse(edge.getOther(current), finish, path, passed)) {
@@ -23,8 +24,8 @@ public class DirectedGraph extends Graph {
     }
 
     @Override
-    void printNextVertex(Edge edge, Vertex currentVertex) {
-        if (((DirectedEdge) edge).getStart() == currentVertex) {
+    void printNextVertex(Edge<E> edge, Vertex<E> currentVertex) {
+        if (((DirectedEdge<E>) edge).getStart() == currentVertex) {
             System.out.print(" " + edge.getOther(currentVertex));
         }
     }

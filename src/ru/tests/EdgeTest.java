@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EdgeTest {
-    Vertex a = new Vertex();
-    Vertex b = new Vertex();
-    Edge edge = new Edge(a, b);
+    Vertex<String> a = new Vertex<>("a");
+    Vertex<String> b = new Vertex<>("b");
+    Edge<String> edge = new Edge<>(a, b);
 
     @Test
     public void shouldReturnOtherVertex() {
@@ -20,12 +20,12 @@ public class EdgeTest {
 
     @Test
     public void shouldThrowExceptionWhenVertexDoesntBelowToTheEdge() {
-        assertThrows(IllegalArgumentException.class, () -> edge.getOther(new Vertex()));
+        assertThrows(IllegalArgumentException.class, () -> edge.getOther(new Vertex<>("c")));
     }
 
     @Test
     public void getStartAndGetEndShouldReturnProperVertices() {
-        DirectedEdge directedEdge = new DirectedEdge(a, b);
+        DirectedEdge<String> directedEdge = new DirectedEdge<>(a, b);
 
         assertEquals(a, directedEdge.getStart());
         assertEquals(b, directedEdge.getEnd());

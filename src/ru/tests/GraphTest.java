@@ -5,6 +5,7 @@ import ru.graph.Edge;
 import ru.graph.Graph;
 import ru.graph.Vertex;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,25 +13,35 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GraphTest {
     @Test
     public void verticesShouldContainEdgeBetweenThem() {
-        Graph graph = new Graph();
-        Vertex a = graph.addVertex();
-        Vertex b = graph.addVertex();
+        Graph<String> graph = new Graph<>();
+        Vertex<String> a = graph.addVertex("a");
+        Vertex<String> b = graph.addVertex("b");
 
-        Edge edge = graph.addEdge(a, b);
+        Edge<String> edge = graph.addEdge(a, b);
 
         assertEquals(edge, a.getEdges().get(0));
         assertEquals(edge, b.getEdges().get(0));
     }
 
     @Test
+    public void loopEdgeShouldAddOnlyOneEdgeToVertex() {
+        Graph<String> graph = new Graph<>();
+        Vertex<String> a = graph.addVertex("a");
+
+        graph.addEdge(a, a);
+
+        assertEquals(1, a.getEdges().size());
+    }
+
+    @Test
     public void shouldFindOneEdgePathInBothDirections() {
-        Graph graph = new Graph();
-        Vertex a = graph.addVertex();
-        Vertex b = graph.addVertex();
+        Graph<String> graph = new Graph<>();
+        Vertex<String> a = graph.addVertex("a");
+        Vertex<String> b = graph.addVertex("b");
         graph.addEdge(a, b);
 
-        List<Edge> abPath = graph.getPath(a, b);
-        List<Edge> baPath = graph.getPath(b, a);
+        List<Edge<String>> abPath = graph.getPath(a, b);
+        List<Edge<String>> baPath = graph.getPath(b, a);
 
         assertEquals(1, abPath.size());
         assertEquals(abPath, baPath);
@@ -38,17 +49,17 @@ public class GraphTest {
 
     @Test
     public void shouldFindTwoEdgePathInBothDirections() {
-        Graph graph = new Graph();
-        Vertex a = graph.addVertex();
-        Vertex b = graph.addVertex();
-        Vertex c = graph.addVertex();
-        Vertex d = graph.addVertex();
-        Edge ab = graph.addEdge(a, b);
-        Edge ac = graph.addEdge(a, c);
-        Edge cd = graph.addEdge(c, d);
+        Graph<String> graph = new Graph<>();
+        Vertex<String> a = graph.addVertex("a");
+        Vertex<String> b = graph.addVertex("b");
+        Vertex<String> c = graph.addVertex("c");
+        Vertex<String> d = graph.addVertex("d");
+        Edge<String> ab = graph.addEdge(a, b);
+        Edge<String> ac = graph.addEdge(a, c);
+        Edge<String> cd = graph.addEdge(c, d);
 
-        List<Edge> adPath = graph.getPath(a, d);
-        List<Edge> daPath = graph.getPath(d, a);
+        List<Edge<String>> adPath = graph.getPath(a, d);
+        List<Edge<String>> daPath = graph.getPath(d, a);
 
         // test a -> d path
         assertEquals(2, adPath.size());
@@ -63,16 +74,59 @@ public class GraphTest {
 
     @Test
     public void shouldNotFindPath() {
-        Graph graph = new Graph();
-        Vertex a = graph.addVertex();
-        Vertex b = graph.addVertex();
-        Vertex c = graph.addVertex();
-        Vertex d = graph.addVertex();
+        Graph<String> graph = new Graph<>();
+        Vertex<String> a = graph.addVertex("a");
+        Vertex<String> b = graph.addVertex("b");
+        Vertex<String> c = graph.addVertex("c");
+        Vertex<String> d = graph.addVertex("d");
         graph.addEdge(a, b);
         graph.addEdge(c, d);
 
-        List<Edge> path = graph.getPath(a, d);
+        List<Edge<String>> path = graph.getPath(a, d);
 
         assertTrue(path.isEmpty());
+    }
+
+    @Test
+    public void shouldFindReturnPath() {
+        Graph<String> graph = new Graph<>();
+        Vertex<String> a = graph.addVertex("a");
+        Vertex<String> b = graph.addVertex("b");
+        graph.addEdge(a, b);
+
+        List<Edge<String>> path = graph.getPath(a, a);
+
+        assertEquals(2, path.size());
+        assertEquals(path.get(0), path.get(1));
+    }
+
+    @Test
+    public void shouldFindLoopPath() {
+        Graph<String> graph = new Graph<>();
+        Vertex<String> a = graph.addVertex("a");
+        Vertex<String> b = graph.addVertex("b");
+        Edge<String> edge = graph.addEdge(a, a);
+        graph.addEdge(a, b);
+
+        List<Edge<String>> path = graph.getPath(a, a);
+
+        assertEquals(1, path.size());
+        assertEquals(edge, path.get(0));
+    }
+
+    @Test
+    public void shouldNotIncludeLoopInPath() {
+        Graph<String> graph = new Graph<>();
+        Vertex<String> a = graph.addVertex("a");
+        Vertex<String> b = graph.addVertex("b");
+        Vertex<String> c = graph.addVertex("c");
+        List<Edge<String>> expectedPath = new ArrayList<>();
+        expectedPath.add(graph.addEdge(a, b));
+        graph.addEdge(b, b); // not included
+        expectedPath.add(graph.addEdge(b, c));
+
+        List<Edge<String>> path = graph.getPath(a, c);
+
+        assertEquals(expectedPath, path);
     }
 }

@@ -1,10 +1,12 @@
 package ru.graph;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
+    private final static AtomicInteger counter = new AtomicInteger(1);
     private final static Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
-    private Graph graph;
+    private Graph<Integer> graph;
 
     public static void main(String[] args) {
         Main app = new Main();
@@ -44,10 +46,10 @@ public class Main {
             }
         } while (graphType == null);
         if (graphType.equals("2")) {
-            graph = new DirectedGraph();
+            graph = new DirectedGraph<>();
             System.out.println("A directed graph has been created.");
         } else {
-            graph = new Graph();
+            graph = new Graph<>();
             System.out.println("An undirected graph has been created.");
         }
         System.out.println();
@@ -76,7 +78,7 @@ public class Main {
     }
 
     private void addVertex() {
-        Vertex vertex = graph.addVertex();
+        Vertex<Integer> vertex = graph.addVertex(counter.getAndIncrement());
         System.out.println("Added vertex: " + vertex);
     }
 
@@ -85,27 +87,27 @@ public class Main {
         int num = scanner.nextInt();
         scanner.nextLine();
         for (int i = 0; i < num; i++) {
-            graph.addVertex();
+            graph.addVertex(counter.getAndIncrement());
         }
         System.out.println("Added " + num + " vertices.");
     }
 
     private void addEdge() {
-        if (graphIsEmpty() || isOnlyOneVertex()) {
+        if (graphIsEmpty()) {
             return;
         }
-        Vertex[] vertices = chooseVertices();
+        Vertex<Integer>[] vertices = chooseVertices();
         graph.addEdge(vertices[0], vertices[1]);
-        System.out.println(String.format("A new edge between %s and %s has been added.", vertices[0].getName(),
-                vertices[1].getName()));
+        System.out.println(String.format("A new edge between %s and %s has been added.", vertices[0].getValue(),
+                vertices[1].getValue()));
     }
 
-    private Vertex[] chooseVertices() {
-        Map<String, Vertex> verticesMap = new HashMap<>();
-        graph.getVertices().forEach(vertex -> verticesMap.put(vertex.getName(), vertex));
+    private Vertex<Integer>[] chooseVertices() {
+        Map<Integer, Vertex<Integer>> verticesMap = new HashMap<>();
+        graph.getVertices().forEach(vertex -> verticesMap.put(vertex.getValue(), vertex));
         showVertices();
-        Vertex start = chooseVertex("start", verticesMap);
-        Vertex end = chooseVertex("end", verticesMap);
+        Vertex<Integer> start = chooseVertex("start", verticesMap);
+        Vertex<Integer> end = chooseVertex("end", verticesMap);
         return new Vertex[] {start, end};
     }
 
@@ -114,51 +116,44 @@ public class Main {
         graph.getVertices().forEach(System.out::println);
     }
 
-    private Vertex chooseVertex(String name, Map<String, Vertex> verticesMap) {
-        String vertexName = null;
+    private Vertex<Integer> chooseVertex(String name, Map<Integer, Vertex<Integer>> verticesMap) {
+        int vertexNum;
         System.out.print("Choose " + name + " vertex: ");
         do {
-            vertexName = scanner.nextLine();
-            if (!verticesMap.containsKey(vertexName)) {
+            vertexNum = scanner.nextInt();
+            scanner.nextLine();
+            if (!verticesMap.containsKey(vertexNum)) {
                 System.out.print("Wrong vertex, try again: ");
-                vertexName = null;
+                vertexNum = -1;
             }
-        } while (vertexName == null);
-        return verticesMap.get(vertexName);
+        } while (vertexNum == -1);
+        return verticesMap.get(vertexNum);
     }
 
     private void getPath() {
-        if (graphIsEmpty() || isOnlyOneVertex()) {
+        if (graphIsEmpty()) {
             return;
         }
-        Vertex[] vertices = chooseVertices();
-        List<Edge> path = graph.getPath(vertices[0], vertices[1]);
+        Vertex<Integer>[] vertices = chooseVertices();
+        List<Edge<Integer>> path = graph.getPath(vertices[0], vertices[1]);
         if (path.isEmpty()) {
-            System.out.println(String.format("There's no path between vertices %s and %s", vertices[0].getName(),
-                    vertices[1].getName()));
+            System.out.println(String.format("There's no path between vertices %s and %s", vertices[0].getValue(),
+                    vertices[1].getValue()));
             return;
         }
-        Vertex prev = vertices[0];
+        Vertex<Integer> prev = vertices[0];
         System.out.print(prev);
-        for (Edge edge: path) {
-            Vertex current = edge.getOther(prev);
+        for (Edge<Integer> edge: path) {
+            Vertex<Integer> current = edge.getOther(prev);
             System.out.print(" => " + current);
             prev = current;
-        };
+        }
         System.out.println();
     }
 
     private boolean graphIsEmpty() {
         if (graph.getVertices().isEmpty()) {
             System.out.println("Graph is empty.");
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isOnlyOneVertex() {
-        if (graph.getVertices().size() == 1) {
-            System.out.println("The graph contains only one vertex and loops aren't supported.");
             return true;
         }
         return false;

@@ -2,20 +2,16 @@ package ru.graph;
 
 import java.util.Objects;
 
-public class Edge {
-    final Vertex a;
-    final Vertex b;
+public class Edge<E> {
+    final Vertex<E> a;
+    final Vertex<E> b;
 
-    public Edge(Vertex a, Vertex b) {
+    public Edge(Vertex<E> a, Vertex<E> b) {
         this.a = a;
         this.b = b;
     }
 
-    public Vertex[] getVertices() {
-        return new Vertex[] {a, b};
-    }
-
-    public Vertex getOther(Vertex vertex) {
+    public Vertex<E> getOther(Vertex<E> vertex) {
         if (vertex == a) {
             return b;
         } else if (vertex == b) {
@@ -28,7 +24,7 @@ public class Edge {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Edge edge = (Edge) o;
+        Edge<?> edge = (Edge<?>) o;
         return Objects.equals(a, edge.a) &&
                 Objects.equals(b, edge.b);
     }
